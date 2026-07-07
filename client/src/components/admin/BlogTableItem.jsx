@@ -4,44 +4,43 @@ import { assets } from "../../assets/assets";
 import toast from "react-hot-toast";
 
 const BlogTableItem = ({ blog, fetchBlogs, index }) => {
-  const { title, createdAt } = blog; 
+  const { title, createdAt } = blog;
   const BlogDate = new Date(createdAt);
 
-  const {axios} = useAppContext();
+  const { axios } = useAppContext();
 
-  const deleteBlog = async()=>{
-    const confirm = window.confirm('Are you sure you want to delete this blog?')
+  // Admin can delete ANY blog — calls admin-specific endpoint (no ownership check)
+  const deleteBlog = async () => {
+    const confirm = window.confirm("Are you sure you want to delete this blog?");
+    if (!confirm) return;
 
-    if(!confirm) return;
     try {
-      const {data} = await axios.post('/api/blog/delete',{id:blog._id})
-      if(data.success){
-        toast.success(data.message)
-        await fetchBlogs()
-      }else{
-        toast.error(data.message)
+      const { data } = await axios.delete(`/api/admin/blog/${blog._id}`);
+      if (data.success) {
+        toast.success(data.message);
+        await fetchBlogs();
+      } else {
+        toast.error(data.message);
       }
     } catch (error) {
-      toast.error(error.message)
+      toast.error(error.message);
     }
+  };
 
-
-  }
-
-  const  togglePublish = async()=>{
+  // Admin can toggle publish on ANY blog — calls admin-specific endpoint
+  const togglePublish = async () => {
     try {
-      const {data} = await axios.post('/api/blog/delete',{id:blog._id})
-    if(data.success){
-        toast.success(data.message)
-        await fetchBlogs()
-      }else{
-        toast.error(data.message)
+      const { data } = await axios.patch(`/api/admin/blog/toggle-publish/${blog._id}`);
+      if (data.success) {
+        toast.success(data.message);
+        await fetchBlogs();
+      } else {
+        toast.error(data.message);
       }
     } catch (error) {
-      toast.error(error.message)
+      toast.error(error.message);
     }
-    
-  }
+  };
 
   return (
     <tr className="border-y border-gray-300">
@@ -54,13 +53,18 @@ const BlogTableItem = ({ blog, fetchBlogs, index }) => {
         </p>
       </td>
       <td className="px-2 py-4 flex text-xs gap-3">
-        <button onClick={togglePublish} className="border px-2 py-0.5 rounded cursor-pointer">
+        <button
+          onClick={togglePublish}
+          className="border px-2 py-0.5 rounded cursor-pointer"
+        >
           {blog.isPublished ? "Unpublish" : "Publish"}
         </button>
         <img
           src={assets.cross_icon}
           className="w-8 hover:scale-110 transition-all cursor-pointer"
-          alt="Delete"  onClick={deleteBlog}/>
+          alt="Delete"
+          onClick={deleteBlog}
+        />
       </td>
     </tr>
   );

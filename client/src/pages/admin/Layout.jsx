@@ -4,19 +4,10 @@ import { Outlet } from "react-router-dom";
 import Sidebar from "../../components/admin/Sidebar";
 import { useAppContext } from "../../context/AppContext";
 
-
-
 const Layout = () => {
+  // adminLogout clears adminToken from state and localStorage correctly
+  const { adminLogout, navigate } = useAppContext();
 
-  const {axios,setToken,navigate} = useAppContext();
-
-  const logout = () => {
-    localStorage.removeItem('token');
-    //new
-    delete axios.defaults.headers.common['Authorization'] ;
-    setToken(null)
-    navigate('/')
-  };
   return (
     <>
       <div
@@ -30,7 +21,7 @@ border-b border-gray-200"
           onClick={() => navigate("/")}
         />
         <button
-          onClick={logout}
+          onClick={adminLogout}
           className="text-sm px-8 py-2 bg-primary text-white rounded-full cursor-pointer"
         >
           Logout
@@ -38,10 +29,9 @@ border-b border-gray-200"
       </div>
 
       <div className="flex h-[calc(100vh-70px)]">
-        <Sidebar/>
-        <Outlet/>
+        <Sidebar />
+        <Outlet />
       </div>
-
     </>
   );
 };
