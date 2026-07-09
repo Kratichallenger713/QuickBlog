@@ -66,8 +66,10 @@ export const AppProvider = ({ children }) => {
             delete axios.defaults.headers.common["Authorization"];
             // Restore user token if one exists
             const savedUser = localStorage.getItem("userToken");
+
             if (savedUser) {
-              axios.defaults.headers.common["Authorization"] = savedUser;
+              axios.defaults.headers.common["Authorization"] =
+                `Bearer ${savedUser}`;
             }
             navigate("/admin");
             return Promise.reject(error);
@@ -93,7 +95,7 @@ export const AppProvider = ({ children }) => {
         }
 
         return Promise.reject(error);
-      }
+      },
     );
 
     // Cleanup interceptor when component unmounts
@@ -152,12 +154,13 @@ export const AppProvider = ({ children }) => {
     localStorage.removeItem("adminToken");
     setAdminToken(null);
 
-    // Restore user token if one exists so user session is not killed
+    delete axios.defaults.headers.common["Authorization"];
+
     const savedUserToken = localStorage.getItem("userToken");
+
     if (savedUserToken) {
-      axios.defaults.headers.common["Authorization"] = savedUserToken;
-    } else {
-      delete axios.defaults.headers.common["Authorization"];
+      axios.defaults.headers.common["Authorization"] =
+        `Bearer ${savedUserToken}`;
     }
 
     navigate("/");
@@ -175,10 +178,13 @@ export const AppProvider = ({ children }) => {
   // ===========================
   useEffect(() => {
     const savedToken = localStorage.getItem("userToken");
+
     if (savedToken) {
       setToken(savedToken);
       tokenRef.current = savedToken;
-      axios.defaults.headers.common["Authorization"] = savedToken;
+
+      axios.defaults.headers.common["Authorization"] = `Bearer ${savedToken}`;
+
       fetchUser(); // Validates the token — if expired, interceptor clears it silently
     }
   }, []);
@@ -188,8 +194,12 @@ export const AppProvider = ({ children }) => {
   // ===========================
   useEffect(() => {
     const savedAdminToken = localStorage.getItem("adminToken");
+
     if (savedAdminToken) {
       setAdminToken(savedAdminToken);
+
+      axios.defaults.headers.common["Authorization"] =
+        `Bearer ${savedAdminToken}`;
     }
   }, []);
 
@@ -223,11 +233,7 @@ export const AppProvider = ({ children }) => {
     setInput,
   };
 
-  return (
-    <AppContext.Provider value={value}>
-      {children}
-    </AppContext.Provider>
-  );
+  return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 };
 
 // Custom Hook

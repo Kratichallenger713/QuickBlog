@@ -28,7 +28,7 @@ const connectDB = async () => {
             "  2. Wrong MONGODB_URI or credentials in .env\n" +
             "  3. No internet connection\n"
         );
-        process.exit(1); // stop the server if DB fails — prevents silent buffering
+        throw error; // Let the caller handle it instead of killing the process
     }
 };
 

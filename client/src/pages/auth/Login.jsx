@@ -22,7 +22,7 @@ const Login = () => {
         setToken(data.token);
 
         localStorage.setItem("userToken", data.token);
-        axios.defaults.headers.common["Authorization"] = data.token;
+        axios.defaults.headers.common["Authorization"] = `Bearer ${data.token}`;
         await fetchUser();
         toast.success(data.message);
 
@@ -37,23 +37,15 @@ const Login = () => {
 
   return (
     <div className="w-full max-w-md bg-white shadow-xl rounded-2xl p-8">
-
       <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold text-gray-800">
-          Welcome Back
-        </h1>
+        <h1 className="text-3xl font-bold text-gray-800">Welcome Back</h1>
 
-        <p className="text-gray-500 mt-2">
-          Login to continue reading blogs.
-        </p>
+        <p className="text-gray-500 mt-2">Login to continue reading blogs.</p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-5">
-
         <div>
-          <label className="block text-sm font-medium mb-2">
-            Email
-          </label>
+          <label className="block text-sm font-medium mb-2">Email</label>
 
           <input
             type="email"
@@ -66,9 +58,7 @@ const Login = () => {
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-2">
-            Password
-          </label>
+          <label className="block text-sm font-medium mb-2">Password</label>
 
           <input
             type="password"
@@ -80,25 +70,17 @@ const Login = () => {
           />
         </div>
 
-        <button
-          className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-lg transition"
-        >
+        <button className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-lg transition">
           Login
         </button>
-
       </form>
 
       <p className="text-center text-sm text-gray-500 mt-6">
         Don't have an account?
-
-        <Link
-          to="/signup"
-          className="text-indigo-600 font-semibold ml-1"
-        >
+        <Link to="/signup" className="text-indigo-600 font-semibold ml-1">
           Sign Up
         </Link>
       </p>
-
     </div>
   );
 };

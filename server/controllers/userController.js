@@ -24,7 +24,7 @@ export const signup = async (req, res) => {
       password: hashedPassword,
     });
 
-    const token = generateToken(user._id);
+    const token = generateToken(user._id.toString());
 
     return res.json({
       success: true,

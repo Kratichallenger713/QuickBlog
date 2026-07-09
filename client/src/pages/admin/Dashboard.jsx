@@ -9,34 +9,34 @@ const Dashboard = () => {
     blogs: 0,
     comments: 0,
     drafts: 0,
-    recentBlogs: []
+    recentBlogs: [],
   });
 
-  const {axios} = useAppContext()
+  const { axios } = useAppContext();
 
   const fetchDashboard = async () => {
     try {
-      const {data} = await axios.get('api/admin/dashboard')
-      console.log('API response:', data);  // <--- Add this
-      data.success ? setDashboardData(data.dashboardData):toast.error(data.message)
+      const { data } = await axios.get("/api/admin/dashboard");
+
+      if (data.success) {
+        setDashboardData(data.dashboardData);
+      } else {
+        toast.error(data.message);
+      }
     } catch (error) {
-      toast.error(error.message)
+      toast.error(error.response?.data?.message || error.message);
     }
-    // setDashboardData(dashboard_data)
   };
 
   useEffect(() => {
     fetchDashboard();
   }, []);
 
-
-  //naya add kiya 
+  //naya add kiya
 
   useEffect(() => {
-  console.log("Fetched Dashboard Data:", dashboardData);
-}, [dashboardData]);
-
-
+    console.log("Fetched Dashboard Data:", dashboardData);
+  }, [dashboardData]);
 
   return (
     <div className=" flex-1 p-4 md:p-10 bg-blue-50/50 ">
@@ -100,34 +100,32 @@ const Dashboard = () => {
               </tr>
             </thead>
             <tbody>
-
-            {/* //naya add kiya  */}
-            {Array.isArray(dashboardData.recentBlogs) && dashboardData.recentBlogs.length > 0 ? (
-    [...dashboardData.recentBlogs]
-      .sort((a, b) => {
-      const dateA = new Date(a.createdAt);
-      const dateB = new Date(b.createdAt);
-      if (isNaN(dateA)) return 1;
-      if (isNaN(dateB)) return -1;
-      return dateB - dateA;
-    })
-      .map((blog, index) => (
-        <BlogTableItem
-          key={blog._id}
-          blog={blog}
-          fetchBlogs={fetchDashboard}
-          index={index + 1}
-        />
-      ))
-  ) : (
-    <tr>
-      <td colSpan="5" className="text-center py-4 text-gray-500">
-        No recent blogs to show.
-      </td>
-    </tr>
-  )}
-
-
+              {/* //naya add kiya  */}
+              {Array.isArray(dashboardData.recentBlogs) &&
+              dashboardData.recentBlogs.length > 0 ? (
+                [...dashboardData.recentBlogs]
+                  .sort((a, b) => {
+                    const dateA = new Date(a.createdAt);
+                    const dateB = new Date(b.createdAt);
+                    if (isNaN(dateA)) return 1;
+                    if (isNaN(dateB)) return -1;
+                    return dateB - dateA;
+                  })
+                  .map((blog, index) => (
+                    <BlogTableItem
+                      key={blog._id}
+                      blog={blog}
+                      fetchBlogs={fetchDashboard}
+                      index={index + 1}
+                    />
+                  ))
+              ) : (
+                <tr>
+                  <td colSpan="5" className="text-center py-4 text-gray-500">
+                    No recent blogs to show.
+                  </td>
+                </tr>
+              )}
 
               {/* {dashboardData.recentBlogs.map((blog, index) => {
                 return <BlogTableItem  key={blog._id}  blog={blog} fetchBlogs={fetchDashboard} index={index+1}  />                

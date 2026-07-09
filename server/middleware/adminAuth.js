@@ -9,7 +9,18 @@ import jwt from "jsonwebtoken";
 
 const adminAuth = async (req, res, next) => {
   try {
-    const token = req.headers.authorization;
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader) {
+      return res.status(401).json({
+        success: false,
+        message: "Token Missing",
+      });
+    }
+
+    const token = authHeader.startsWith("Bearer ")
+      ? authHeader.split(" ")[1]
+      : authHeader;
 
     if (!token) {
       return res.status(401).json({
@@ -31,6 +42,7 @@ const adminAuth = async (req, res, next) => {
 
     next();
   } catch (error) {
+    console.error("Admin Auth Error:", error.message);
     return res.status(401).json({
       success: false,
       message: "Invalid or Expired Token",
