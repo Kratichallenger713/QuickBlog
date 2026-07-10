@@ -15,7 +15,7 @@ const adminRouter = express.Router();
 
 // Public — no auth needed
 adminRouter.post("/login", adminLogin);
-adminRouter.get("/comments", getAllComments);
+adminRouter.get("/comments",adminAuth, getAllComments);
 
 // Protected — admin-only routes
 adminRouter.get("/blogs", adminAuth, getAllBlogsAdmin);

@@ -24,7 +24,9 @@ export const signup = async (req, res) => {
       password: hashedPassword,
     });
 
-    const token = generateToken(user._id.toString());
+    const token = generateToken({
+      id: user._id.toString(),
+    });
 
     return res.json({
       success: true,
@@ -42,43 +44,44 @@ export const signup = async (req, res) => {
 };
 
 export const login = async (req, res) => {
-    try {
-        const { email, password } = req.body;
+  try {
+    const { email, password } = req.body;
 
-        const user = await User.findOne({ email });
+    const user = await User.findOne({ email });
 
-        if (!user) {
-            return res.status(404).json({
-                success: false,
-                message: "User not found",
-            });
-        }
-
-        const isMatch = await bcrypt.compare(password, user.password);
-
-        if (!isMatch) {
-            return res.status(401).json({
-                success: false,
-                message: "Invalid password",
-            });
-        }
-
-        const token = generateToken(user._id);
-
-        return res.json({
-            success: true,
-            message: "Login successful",
-            token,
-        });
-
-    } catch (error) {
-        console.error(error);
-
-        return res.status(500).json({
-            success: false,
-            message: "Internal Server Error",
-        });
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
     }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if (!isMatch) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid password",
+      });
+    }
+
+    const token = generateToken({
+      id: user._id,
+    });
+
+    return res.json({
+      success: true,
+      message: "Login successful",
+      token,
+    });
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server Error",
+    });
+  }
 };
 
 export const getUserProfile = async (req, res) => {
@@ -96,7 +99,6 @@ export const getUserProfile = async (req, res) => {
       success: true,
       user,
     });
-
   } catch (error) {
     console.error(error);
 
